@@ -8,3 +8,5 @@ spark-warehouse/
 *.crc
 results/
 *web_log_sample.log
+*local.conf
+

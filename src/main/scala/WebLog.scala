@@ -58,6 +58,7 @@ object WebLog {
     val sparkAppName = config.SPARK_APP_NAME
     val sparkMaster = config.SPARK_MASTER
     val logFilePath = config.LOG_FILE_PATH
+    val resultFolderPath = config.RESULT_FOLDER_PATH
     val sessionExpireMilliseconds = config.SESSION_EXPIRE_MILLISECONDS
     // create SparkSession
     val sparkConf = new SparkConf().setAppName(sparkAppName).setMaster(sparkMaster)
@@ -120,26 +121,26 @@ object WebLog {
     val webRecordsWithSessionIdDf = webRecordsWithSessionNumDf.withColumn("sessionId", generateSessionId($"clientIp", $"sessionNum"))
       .select($"sessionId", $"clientIp", $"url", $"duration").cache()
     webRecordsWithSessionIdDf.show(5)
-    //webRecordsWithSessionIdDf.coalesce(1).write.format("csv").save("results/ans01")
+    webRecordsWithSessionIdDf.coalesce(1).write.format("csv").mode("overwrite").save(resultFolderPath)
 
     // ans02: Determine the average session time
     val sessionsWithTimeDf = webRecordsWithSessionIdDf.groupBy($"sessionId").sum("duration").withColumnRenamed("sum(duration)", "sessionTime")
     val sessionsMeanTimeDf = sessionsWithTimeDf.select(mean("sessionTime"))
     sessionsMeanTimeDf.show(5)
-    //sessionsMeanTimeDf.coalesce(1).write.format("csv").save("results/ans02")
+    sessionsMeanTimeDf.coalesce(1).write.format("csv").mode("overwrite").save(resultFolderPath)
 
     // ans03: Determine unique URL visits per session
     val sessionsUniqueVisitDf = webRecordsWithSessionIdDf.groupBy($"sessionId").agg(collect_set($"url"))
       .select($"sessionId", size($"collect_set(url)")).withColumnRenamed("size(collect_set(url))", "uniqueUrls")
       .sort($"uniqueUrls".desc)
     sessionsUniqueVisitDf.show(5)
-    //sessionsUniqueVisitDf.coalesce(1).write.format("csv").save("results/ans03")
+    sessionsUniqueVisitDf.coalesce(1).write.format("csv").mode("overwrite").save(resultFolderPath)
 
     // ans04: Find the most engaged users
     val sessionsMostEngagedUserDf = webRecordsWithSessionIdDf.groupBy($"clientIp").sum("duration")
       .withColumnRenamed("sum(duration)", "totalSessionTime").sort($"totalSessionTime".desc)
     sessionsMostEngagedUserDf.show(5)
-    //sessionsMostEngagedUserDf.coalesce(1).write.format("csv").save("results/ans04")
+    sessionsMostEngagedUserDf.coalesce(1).write.format("csv").mode("overwrite").save(resultFolderPath)
 
   }
 }

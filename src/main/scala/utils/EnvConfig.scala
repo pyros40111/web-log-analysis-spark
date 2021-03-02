@@ -4,7 +4,8 @@ import com.typesafe.config.{Config, ConfigFactory}
 
 class EnvConfig(config: Config) {
   // data configs
-  val LOG_FILE_PATH = config.getString("data.path")
+  val LOG_FILE_PATH = config.getString("data.logFile")
+  val RESULT_FOLDER_PATH = config.getString("data.resultFolder")
   // spark configs
   val SPARK_APP_NAME = config.getString("spark.appName")
   val SPARK_MASTER = config.getString("spark.master")

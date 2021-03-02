@@ -22,18 +22,19 @@ Below is details of my environment.
 - Java: AdoptOpenJDK 1.8.0_222
 
 ## Configurations
-If you want to change some environment settings, there are some of them are configured.
+If you want to change some environment settings, there are some of them are configured. 
 Just write your configurations to `src/main/resources/application.conf`
 
-Content of `application.conf`:
+Example of `application.conf`:
 ```text
 data {
-  path = "src/main/resources/web_log_sample.log"
+  logFile = "hdfs://127.0.0.1:8020/data/web_log_sample.log"
+  resultFolder = "hdfs://127.0.0.1:8020/results/"
 }
 
 spark {
   appName = "web-log-analysis"
-  master = "local[*]"
+  master = "spark://127.0.0.1:7077"
 }
 
 weblog {
@@ -42,13 +43,15 @@ weblog {
 
 ```
 - data.path: file path of web log file
+- data.resultFolder: path of folder to place result files
 - spark.appName: application name of this spark application
 - spark.master: Address of your Spark Cluster
 - weblog.sessionExpireMilliseconds: How long will the session expire
 
 ## Result
-Just print parts of results below. 
 Result files are too large to be pushed to git remote repo.
+So files will be written to HDFS.
+Just print parts of results below. 
 
 Goal01: 
 ```text
