@@ -1,0 +1,10 @@
+.bsp/
+.idea/
+metastore_db/
+target/
+project/
+derby.log
+spark-warehouse/
+*.crc
+results/
+*web_log_sample.log
